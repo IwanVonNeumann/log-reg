@@ -34,7 +34,7 @@ y_test = y_test.reshape(n_test, 1)
 y_prob = log_reg.predict_probs(X_test_std).reshape(n_test, 1)
 y_pred = log_reg.predict(X_test_std).reshape(n_test, 1)
 
-predictions = np.concatenate((y_prob, y_pred, y_test), axis=1)
+predictions = np.concatenate((np.around(y_prob, 3), y_pred, y_test), axis=1)
 predictions_df = pd.DataFrame(predictions, columns=["predicted prob", "predicted class", "class"])
 
 print("Classification results:")
