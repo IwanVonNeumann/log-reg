@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
@@ -36,7 +37,11 @@ y_pred = log_reg.predict(X_test_std).reshape(n_test, 1)
 predictions = np.concatenate((y_prob, y_pred, y_test), axis=1)
 predictions_df = pd.DataFrame(predictions, columns=["predicted prob", "predicted class", "class"])
 
+print("Classification results:")
 print(predictions_df)
+print()
+
+print("Classification accuracy: {:.3f}".format(accuracy_score(y_test, y_pred)))
 
 error_plot_settings = {
     "title": "LogReg Gradient Ascent",
