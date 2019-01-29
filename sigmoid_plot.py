@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def sigmoid(z):
@@ -17,5 +17,5 @@ plt.axhline(y=0.5, ls='dotted', color='k')
 plt.yticks([0.0, 0.5, 1.0])
 plt.ylim(-0.1, 1.1)
 plt.xlabel('z')
-plt.ylabel('$\phi (z)$')
+plt.ylabel('$\sigma (z)$')
 plt.show()
