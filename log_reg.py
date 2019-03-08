@@ -3,50 +3,45 @@ import numpy as np
 
 class LogisticRegression(object):
 
-    def __init__(self, eta=0.01, n_iter=50):
-        self.eta = eta
+    def __init__(self, learning_rate=0.01, n_iter=50):
+        self.learning_rate = learning_rate
         self.n_iter = n_iter
 
     def fit(self, X, y):
-        X_ = self._prepend_unit_column(X)
-        self.w_ = np.zeros(X_.shape[1])
-        self.log_lik_history_ = []
+        n, m = X.shape
+
+        self.w_ = np.zeros(shape=(m, 1))
+        self.b_ = 0
+
+        self.cost_history_ = []
 
         for _ in range(self.n_iter):
-            phi = self.activation(X_)
-            dw = self.eta * X_.T.dot(y - phi)
-            self.w_ += dw
+            a = self.activation(X)
+            self.w_ += self.learning_rate * X.T.dot(y - a)
+            self.b_ += self.learning_rate * np.sum(y - a)
 
-            log_lik = self.log_likelihood(X_, y)
-            self.log_lik_history_.append(log_lik)
+            cost = self.cost(X, y)
+            self.cost_history_.append(cost)
 
         return self
 
-    def activation(self, X):
-        """Compute sigmoid activation"""
-        return 1 / (1 + np.exp(-self.net_input(X)))
-
     def net_input(self, X):
-        """Calculate net input"""
-        return np.dot(X, self.w_)
+        return X.dot(self.w_) + self.b_
+
+    def activation(self, X):
+        z = self.net_input(X)
+        return 1 / (1 + np.exp(-z))
+
+    def cost(self, X, y):
+        return -self.log_likelihood(X, y)
 
     def log_likelihood(self, X, y):
-        z = np.dot(X, self.w_)
-        phi = 1 / (1 + np.exp(-z))
-        return y.dot(np.log(phi)) + (1 - y).dot(np.log(1 - phi))
+        a = self.activation(X)
+        return (y * np.log(a) + (1 - y) * np.log(1 - a)).sum()
 
-    def predict(self, X):
-        """Return class label after unit step"""
-        X_ = self._prepend_unit_column(X)
-        return np.where(self.activation(X_) >= 0.5, 1, 0)
+    def predict(self, X, t=0.5):
+        a = self.activation(X)
+        return np.where(a >= t, 1, 0)
 
     def predict_probs(self, X):
-        """Return positive class label probabilities"""
-        X_ = self._prepend_unit_column(X)
-        return self.activation(X_)
-
-    @staticmethod
-    def _prepend_unit_column(X):
-        h, _ = X.shape
-        unit_column = np.full((h, 1), 1)
-        return np.append(unit_column, X, axis=1)
+        return self.activation(X)
